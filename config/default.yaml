@@ -1,0 +1,16 @@
+# --- Input ---
+input:
+ path: D:\MnS\Presentation\Business Papers\2022_HanKookTire\ImageSet
+ base_path: D:\MnS\Presentation\Business Papers\2022_HanKookTire\Algo
+# --- Preprocessing ---
+preprocessing:
+ raw_path: "Preprocessing"
+ lab_folder: "01_lab"
+ mf_folder: "02_median"
+ bf_folder: "02_bilateral"
+ comp_folder: "03_composite"
+# --- Processing ---
+Processing:
+ raw_path: "Processing"
+ input_folder: "01_input"
+ red_folder: "02_onlyred"
