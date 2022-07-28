@@ -1,7 +1,10 @@
+# --- Defaults ---
+default:
+ save: True
 # --- Input ---
 input:
- path: D:\MnS\Presentation\Business Papers\2022_HanKookTire\ImageSet
- base_path: D:\MnS\Presentation\Business Papers\2022_HanKookTire\Algo
+ path: D:\MnS\Presentation\Business Papers\2022_HanKookTire\Data\ImageSet
+ base_path: D:\MnS\Presentation\Business Papers\2022_HanKookTire\Data\Algo
 # --- Preprocessing ---
 preprocessing:
  raw_path: "Preprocessing"
@@ -9,8 +12,27 @@ preprocessing:
  mf_folder: "02_median"
  bf_folder: "02_bilateral"
  comp_folder: "03_composite"
+ input_folder: "04_input"
+ red_folder: "05_onlyred"
+ height_folder: "04_height"
 # --- Processing ---
 Processing:
  raw_path: "Processing"
  input_folder: "01_input"
- red_folder: "02_onlyred"
+ edge_folder: "02_target"
+ blur_folder: "03_blur"
+ norm_folder: "04_norm"
+ # --- Detection Model ---
+Detector:
+ raw_path: "Detection"
+ detected_folder: "01_detected"
+ overlay_folder: "02_overlay"
+ deleted_folder: "03_deleted"
+ model_name: "Yolov5"
+ hub_mode: False
+ model_handle: "./detector/save/best.pt"
+ label_path: "./config/yolov5_label_map.yaml"
+ box_min_score: 0.3
+ iou_score: 0.3
+ offset_score: 0.3
+ max_boxes: 10
