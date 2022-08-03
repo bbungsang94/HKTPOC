@@ -18,7 +18,7 @@ if __name__ == '__main__':
     save_debug = default_option['save']
     # 입력 설정 가져오기
     input_config = config['input']
-    proc_config = config['Processing']
+    proc_config = config['processing']
     proc_config['raw_path'] = os.path.join(input_config['base_path'], proc_config['raw_path'])
     temp_path = os.path.join(input_config['base_path'],
                              config['preprocessing']['raw_path'],

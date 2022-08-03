@@ -1,3 +1,5 @@
+import copy
+
 import torchvision
 import tensorflow as tf
 from detector.utils.general import check_img_size, check_requirements, non_max_suppression, scale_coords, xyxy2xywh
@@ -81,25 +83,29 @@ class Detector:
             # print(f'Inferencing and Processing Done. ({time.time() - t0:.3f}s)')
             # result = {key: value.numpy() for key, value in result.items()}
         info = tf.shape(input_image)
-        box_info = self.__post_process(result, info)
-        return converted_img, box_info
+        box_info, raw_boxes = self.__post_process(result, info)
+        return converted_img, box_info, raw_boxes
 
     def __post_process(self, result, info):
         boxes = result["detection_boxes"]
-        classes = result["detection_class"]
+        classe_labels = result["detection_class_labels"]
         scores = result["detection_scores"]
+        classes = result["detection_class"]
 
+        cls_idx = classe_labels == 0
         box_idx = scores > self.box_min_score
+        box_idx = cls_idx & box_idx
         classes[box_idx] = "Block"
         img_shape = np.array(info)
 
         box_boxes = boxes[box_idx]
+        raw_boxes = copy.deepcopy(box_boxes)
         box_boxes = self.get_zboxes(box_boxes, im_width=img_shape[1], im_height=img_shape[0])
         box_classes = classes[box_idx]
         box_scores = scores[box_idx]
         box_info = (box_boxes, box_classes, box_scores)
 
-        return box_info
+        return box_info, raw_boxes
 
     def get_zboxes(self, boxes, im_width, im_height):
         z_boxes = []

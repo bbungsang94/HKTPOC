@@ -16,18 +16,19 @@ preprocessing:
  red_folder: "05_onlyred"
  height_folder: "04_height"
 # --- Processing ---
-Processing:
+processing:
  raw_path: "Processing"
  input_folder: "01_input"
  edge_folder: "02_target"
  blur_folder: "03_blur"
  norm_folder: "04_norm"
  # --- Detection Model ---
-Detector:
+detector:
  raw_path: "Detection"
  detected_folder: "01_detected"
  overlay_folder: "02_overlay"
  deleted_folder: "03_deleted"
+ anchor_folder: "04_anchors"
  model_name: "Yolov5"
  hub_mode: False
  model_handle: "./detector/save/best.pt"
@@ -36,3 +37,16 @@ Detector:
  iou_score: 0.3
  offset_score: 0.3
  max_boxes: 10
+  # --- Pattern Matching Model ---
+matcher:
+ raw_path: "PatternMatching"
+ fitted_folder: "01_fitted"
+ detected_folder: "02_form"
+ defined_patterns:
+  2:
+   cap: [['H', 'V', '_'], ['H', 'H', 'H'], ['VH', 'V', '_']]
+   cup: [['V', '_', 'H'], ['H', 'H', 'H'], ['V', '_', '_']]
+   bar: [['H', 'H', 'H'], ['H', 'H', 'H']]
+  1.5:
+   wing: [['H', 'H', 'H'], ['V', 'V', '_'], ['H', 'H', 'H']]
+   stick: [['V', 'V'], ['V', 'V'], ['V', 'V'], ['V', 'V']]

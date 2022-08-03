@@ -254,19 +254,38 @@ class ImageManager:
                 color, display_str_list=[display_str])
         return np.array(image_pil)
 
-    def draw_boxes_info(self, image, info):
+    def draw_just_boxes(self, image, boxes, color_idx=2):
+        if isinstance(image, np.ndarray):
+            np_image = image
+        else:
+            np_image = image.numpy()
+        image_pil = Image.fromarray(np_image)
+
+        for i in range(boxes.shape[0]):
+            color = self.Colors[color_idx % len(self.Colors)]
+
+            top, left, bottom, right = tuple(boxes[i])
+            self.draw_bounding_box_on_image(
+                image_pil, top, left, bottom, right,
+                color)
+        return np.array(image_pil)
+
+    def draw_boxes_info(self, image, info, single=False, color_idx=2):
         """Overlay labeled boxes on an image with formatted scores and label names."""
         if isinstance(image, np.ndarray):
             np_image = image
         else:
             np_image = image.numpy()
-        np_image = np_image[:, :, ::-1]
+        if single:
+            np_image = np_image[:, :]
+        else:
+            np_image = np_image[:, :, ::-1]
         image_pil = Image.fromarray(np_image)
 
         (boxes, classes, scores) = info
         for i in range(boxes.shape[0]):
             display_str = "{}: {}%".format(classes[i], int(100 * scores[i]))
-            color = self.Colors[2 % len(self.Colors)]
+            color = self.Colors[color_idx % len(self.Colors)]
 
             top, left, bottom, right = tuple(boxes[i])
             self.draw_bounding_box_on_image(
