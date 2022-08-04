@@ -8,8 +8,7 @@ def save_image(path, image, option=True):
     if option:
         cv2.imwrite(path, image)
 
-
-if __name__ == '__main__':
+def main():
     # region Configuration
     config = ConfigMapper.config_copy(
         ConfigMapper.get_config(root='./config')
@@ -51,7 +50,7 @@ if __name__ == '__main__':
         img_b_blur = cv2.GaussianBlur(image_g, (3, 3), sigmaX=0, sigmaY=0)
         save_image(os.path.join(input_path, image_path), image_r, save_debug)
         image_edge = cv2.merge([img_b_blur, img_g_blur, image_r])
-        #image_edge = cv2.Canny(image=img_blur, threshold1=100, threshold2=200)
+        # image_edge = cv2.Canny(image=img_blur, threshold1=100, threshold2=200)
         save_image(os.path.join(edge_path, image_path), image_edge, save_debug)
 
         # img_r_blur = cv2.medianBlur(image_r, 75)
@@ -61,5 +60,8 @@ if __name__ == '__main__':
         save_image(os.path.join(blur_path, image_path), img_g_blur, save_debug)
         img_norm = cv2.normalize(img_b_blur, None, 0, 255, cv2.NORM_MINMAX)
         save_image(os.path.join(norm_path, image_path), img_norm, save_debug)
+
+if __name__ == '__main__':
+    main()
 
 

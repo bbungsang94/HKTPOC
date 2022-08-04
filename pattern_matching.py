@@ -28,7 +28,7 @@ def get_value(block_model, min_len=1, max_len=2, position="H"):
             return 0
 
 
-if __name__ == '__main__':
+def main():
     # region Configuration
     config = ConfigMapper.config_copy(
         ConfigMapper.get_config(root='./config')
@@ -118,15 +118,14 @@ if __name__ == '__main__':
             pack = pickle.load(fr)
         (image_bgr, info, raw_boxes, largest_anchor) = pack
         image_path = file_name.replace(".pickle", ".jpg")
+        img_height, img_width, _ = image_bgr.shape
         # 모든 Block 0, 0으로 fitting 작업
         boxes = copy.deepcopy(info[0])
         if len(boxes) < 2:
             continue
         # 모든 Block 좌표를 [0, 1] 로 Normalizing
-        max_bottom = max(boxes[:, 2])
-        boxes[:, [0, 2]] /= max_bottom
-        max_right = max(boxes[:, 3])
-        boxes[:, [1, 3]] /= max_right
+        boxes[:, [0, 2]] /= img_height
+        boxes[:, [1, 3]] /= img_width
 
         # Reference block 매칭 작업 진행
         for ref_index, blocks in enumerate(reference_patterns_info['blocks']):
@@ -159,10 +158,12 @@ if __name__ == '__main__':
             image_handler.save_tensor(img=matched_image, path=os.path.join(detected_path, image_path))
             # 이미지 쉐잎에 맞는 패턴 이미지 추출
             draw_blocks = copy.deepcopy(reference_patterns_info['blocks'][index])
-            draw_blocks[:, [0, 2]] *= max_bottom
-            draw_blocks[:, [1, 3]] *= max_right
-            fitted_image = image_handler.draw_just_boxes(image_bgr, draw_blocks, color_idx=7)
-            fitted_image = image_handler.draw_just_boxes(fitted_image, info[0], color_idx=0)
+            draw_blocks[:, [0, 2]] *= img_height
+            draw_blocks[:, [1, 3]] *= img_width
+            fitted_image = image_handler.draw_just_boxes(matched_image, draw_blocks, color_idx=7)
             image_handler.save_tensor(img=fitted_image, path=os.path.join(fitted_path, image_path))
         # end region
 
+
+if __name__ == '__main__':
+    main()

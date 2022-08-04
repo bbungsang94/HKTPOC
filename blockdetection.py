@@ -19,8 +19,7 @@ def detect(det, tensor_image, visible=False):
 
     return dt_image, result, raw
 
-
-if __name__ == '__main__':
+def main():
     # region Configuration
     # 설정 가져오기
     config = ConfigMapper.config_copy(
@@ -62,15 +61,15 @@ if __name__ == '__main__':
     for image_path in image_list:
         full_path = os.path.join(temp_path, image_path)
         image_bgr = cv2.imread(full_path, cv2.IMREAD_COLOR)
-        (h, w, c) = image_bgr.shape
-        if h > w:
-            image_bgr = cv2.rotate(image_bgr, cv2.ROTATE_90_CLOCKWISE)
+        # (h, w, c) = image_bgr.shape
+        # if h > w:
+        #     image_bgr = cv2.rotate(image_bgr, cv2.ROTATE_90_CLOCKWISE)
 
         image_tensor = ImageManager.convert_tensor(image_bgr, bgr2rgb=False)
 
         detected_image, info, raw_boxes = detect(det=block_detector, tensor_image=image_tensor, visible=save_debug)
 
-        image_blur = image_bgr # cv2.imread(os.path.join(blur_path, image_path))
+        image_blur = image_bgr  # cv2.imread(os.path.join(blur_path, image_path))
         overlay_image = image_handler.draw_boxes_info(image_blur, info, single=False)
         if save_debug:
             image_handler.save_tensor(img=detected_image, path=os.path.join(detected_path, image_path))
@@ -144,10 +143,13 @@ if __name__ == '__main__':
 
         deleted_image = image_handler.draw_boxes_info(image_blur, info, single=False)
         if save_debug:
-            #file_prefix = "{:.2f}".format(largest_anchor['multiple'])
+            # file_prefix = "{:.2f}".format(largest_anchor['multiple'])
             image_handler.save_tensor(img=deleted_image, path=os.path.join(deleted_path, image_path))
             pickle_name = image_path.replace(".jpg", ".pickle")
             pack = (image_bgr, info, raw_boxes, largest_anchor)
             with open(os.path.join(anchor_path, pickle_name), "wb") as fw:
                 pickle.dump(pack, fw)
 
+
+if __name__ == '__main__':
+    main()

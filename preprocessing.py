@@ -9,7 +9,7 @@ def save_image(path, image, option=True):
         cv2.imwrite(path, image)
 
 
-if __name__ == '__main__':
+def main():
     # region Configuration
     # 설정 가져오기
     config = ConfigMapper.config_copy(
@@ -88,3 +88,7 @@ if __name__ == '__main__':
         test_image = cv2.merge([cv2.bitwise_not(temp), a_channel, b_channel])
         save_image(os.path.join(height_path, image_path), test_image, save_debug)
         # endregion
+
+
+if __name__ == '__main__':
+    main()
