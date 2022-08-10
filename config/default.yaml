@@ -29,9 +29,10 @@ detector:
  overlay_folder: "02_overlay"
  deleted_folder: "03_deleted"
  anchor_folder: "04_anchors"
- model_name: "Yolov5"
+ label_folder: "05_labels"
+ model_name: "Yolov7"
  hub_mode: False
- model_handle: "./detector/save/best.pt"
+ model_handle: "./detector/save/Yolov7_best.pt"
  label_path: "./config/yolov5_label_map.yaml"
  box_min_score: 0.3
  iou_score: 0.3
