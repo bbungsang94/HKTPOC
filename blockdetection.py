@@ -74,7 +74,7 @@ def main():
         if save_debug:
             image_handler.save_tensor(img=detected_image, path=os.path.join(detected_path, image_path))
             image_handler.save_tensor(img=overlay_image, path=os.path.join(overlay_path, image_path))
-
+            del detected_image
         (boxes, classes, scores) = info
         # 가장 큰 면적을 가진 블럭을 최상단 블럭으로 인지
         largest_anchor = {'width': 0, 'height': 0, 'surface': 0, 'index': -1, 'multiple': 1.0, 'mean': 0}
@@ -119,23 +119,23 @@ def main():
                 multiple = height / width
 
             multiple_gap = abs(largest_anchor['multiple'] - multiple)
+            surface_gap = (width * height) / largest_anchor['surface']
+            # roi = image_blur_mono[height_min:height_max, width_min:width_max]
+            # mean = np.mean(roi[:, :])
+            # mean_gap = abs(largest_anchor['mean'] - mean)
+            # mean_gap = mean_gap / 255
 
-            roi = image_blur_mono[height_min:height_max, width_min:width_max]
-            mean = np.mean(roi[:, :])
-            mean_gap = abs(largest_anchor['mean'] - mean)
-            mean_gap = mean_gap / 255
-
-            if multiple_gap > 0.5:
-                multiple_gap_count += 1
-                print("Multiple Gap:" + str(multiple_gap))
-                print(multiple_gap_count)
-            elif mean_gap > 1.0:
-                mean_gap_count += 1
-                print("Mean Gap:" + str(mean_gap))
-                print(multiple_gap_count)
-            else:
+            # if multiple_gap > 0.4:
+            #     multiple_gap_count += 1
+            #     print("Multiple Gap:" + str(multiple_gap))
+            #     print(multiple_gap_count)
+            # elif mean_gap > 100.0:
+            #     mean_gap_count += 1
+            #     print("Mean Gap:" + str(mean_gap))
+            #     print(multiple_gap_count)
+            # else:
+            if surface_gap > 0.6:
                 allive_idx.append(i)
-
         boxes = boxes[allive_idx]
         classes = classes[allive_idx]
         scores = scores[allive_idx]

@@ -1,16 +1,9 @@
 import copy
-
-import torchvision
-import tensorflow as tf
-from detector.utils.general import check_img_size, check_requirements, non_max_suppression, scale_coords, xyxy2xywh
+from utils.general import check_img_size, check_requirements, non_max_suppression, scale_coords, xyxy2xywh
 from utilities.media_handler import *
 import torch
 import torch.nn.functional as nnf
 import numpy as np
-import time
-import cv2
-
-from detector.utils.general import xywh2xyxy
 
 
 class Detector:
@@ -25,10 +18,10 @@ class Detector:
         self.offset_score = config['offset_score']
         self.max_boxes = config['max_boxes']
 
-        from detector.models.experimental import attempt_load
+        from models.experimental import attempt_load
         self.Detector = attempt_load(self.model_handle, map_location=torch.device('cuda:0'))
 
-        # self.Detector.eval()
+        self.Detector.eval()
 
     def detection(self, input_image):
         """Determines the locations of the vehicle in the image
@@ -50,8 +43,9 @@ class Detector:
             converted_img = image
 
         out = nnf.interpolate(converted_img, size=(480, 640), mode='bicubic', align_corners=False)
-        pred = self.Detector(out, augment=False, visualize=False)
-        pred = non_max_suppression(pred[0], self.box_min_score, self.iou_score)
+        with torch.no_grad():
+            pred = self.Detector(out, augment=False)
+            pred = non_max_suppression(pred[0], self.box_min_score, self.iou_score)
         det = pred[0]
         gn = torch.tensor([640, 480, 640, 480])
         result = dict()
@@ -84,6 +78,9 @@ class Detector:
             # result = {key: value.numpy() for key, value in result.items()}
         info = tf.shape(input_image)
         box_info, raw_boxes = self.__post_process(result, info)
+
+        del input_image
+        torch.cuda.empty_cache()
         return converted_img, box_info, raw_boxes
 
     def __post_process(self, result, info):
