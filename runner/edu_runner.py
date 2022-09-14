@@ -1,9 +1,7 @@
-import preprocessing
-import categorization
-import blockdetection
-import pattern_matching
+from education import blockdetection, categorization, pattern_matching, preprocessing
 
-if __name__ == '__main__':
+
+def edu_main():
     print('Preprocessing')
     preprocessing.main()
     print('Categorization')
@@ -12,3 +10,7 @@ if __name__ == '__main__':
     blockdetection.main()
     print('Pattern_matching')
     pattern_matching.main()
+
+
+if __name__ == '__main__':
+    edu_main()
