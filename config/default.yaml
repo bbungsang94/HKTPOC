@@ -21,7 +21,7 @@ depthfilter:
  raw_path: "Depth"
  hist_folder: "01_histogram"
  outlier_depth: [30, 70]
- height_gap: 30.6
+ height_gap: 18.0
  # 22.3
  normalize_thrd: 0.5
  save: False
@@ -33,8 +33,8 @@ preprocessing:
  mf_folder: "02_median"
  bf_folder: "02_bilateral"
  comp_folder: "03_composite"
- input_folder: "04_input"
- red_folder: "05_onlyred"
+ input_folder: "04_light_removal"
+ red_folder: "05_blur"
  height_folder: "04_height"
  save: False
 # --- Processing ---

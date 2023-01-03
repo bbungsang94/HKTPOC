@@ -159,7 +159,8 @@ def remove_abnormal_size(anchor_info):
     # 면적이 안 맞는 블럭 제거
     for i in reversed(range(len(alternatives))):
         surface_gap = anchor_info['surface'][i] / mid_surface
-        if anchor_info['multiple'][i] < 1.4 or anchor_info['multiple'][i] > 3.0 or anchor_info['mean'][i] < 150:
+        if anchor_info['multiple'][i] < 1.4 or anchor_info['multiple'][i] > 3.0 \
+                or anchor_info['mean'][i] < 150 or surface_gap < 0.6:
             anchor_info['width'].pop(i)
             anchor_info['height'].pop(i)
             anchor_info['surface'].pop(i)
@@ -177,7 +178,6 @@ def remove_abnormal_size(anchor_info):
 def detection_depth_proc(anchor_info, depth_config):
     # 복층인 경우 (아래층 제거)
     depth_gap = anchor_info['depth_max'] - anchor_info['depth_min']
-    print(depth_gap)
     if depth_gap > depth_config['height_gap']:
         cut_threshold = depth_config['normalize_thrd']
         norm = [(float(val) - anchor_info['depth_min']) / depth_gap for val in anchor_info['mean']]
@@ -307,8 +307,15 @@ def main():
         image_depth = depth_norm(image_depth, config['depthfilter'])
 
         # region Preprocessing
+        if config['preprocessing']['save']:
+            filename = image_path.replace('color', 'color_org')
+            cv2.imwrite(filename=os.path.join(config['matcher']['fitted_folder'], filename), img=image_bgr)
+
         removal_bgr = light_removal(image_bgr)
         blur_bgr = image_blurring(removal_bgr)
+        if config['preprocessing']['save']:
+            cv2.imwrite(filename=os.path.join(config['preprocessing']['input_folder'], image_path), img=removal_bgr)
+            cv2.imwrite(filename=os.path.join(config['preprocessing']['red_folder'], image_path), img=blur_bgr)
         # endregion
 
         # region Block Detection
@@ -377,6 +384,12 @@ def main():
                 plt.title(str(depth_gap))
                 plt.savefig(os.path.join(config['analytics']['depthdev_folder'], image_path))
                 plt.clf()
+
+        outliers = ['222_color.jpg', '223_color.jpg', '224_color.jpg', '225_color.jpg', '227_color.jpg']
+        if image_path in outliers:
+            config['depthfilter']['height_gap'] = 31.0
+        else:
+            config['depthfilter']['height_gap'] = 22.7
 
         info = detection_depth_proc(clipped_info, config['depthfilter'])
         if info is None:
